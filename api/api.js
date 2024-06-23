@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const getLatestVersion = async (packageName, redis) => {
+const getLatestVersion = async (packageName) => {
   try {
     // const cacheKey = `latestVersion-${packageName}`;
     // let version = await redis.get(cacheKey);
@@ -19,8 +19,9 @@ const getLatestVersion = async (packageName, redis) => {
     return version;
     // }
   } catch (error) {
-    console.error(error);
-    throw error;
+    // console.error(error);
+    console.log(error.message);
+    // throw error;
   }
 };
 

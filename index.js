@@ -6,6 +6,7 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import { getLatestVersion } from "./api/api.js";
+import ora from "ora";
 
 const questions = [
   {
@@ -73,11 +74,14 @@ const questions = [
 ];
 
 async function createApp() {
+  console.log("\n");
+  console.log(chalk.green("Welcome to the Node.js project generator! 🚀"));
+  // console.log("\n");
+  const answers = await inquirer.prompt(questions);
+  console.log("\n");
+  const spinner = ora("Setting up your project...\n\n").start();
+  // console.log("\n");
   try {
-    console.log(chalk.green("Welcome to the Node.js project generator! 🚀"));
-
-    const answers = await inquirer.prompt(questions);
-
     const projectName = answers.name;
     const projectDir = `./${projectName}`;
 
@@ -124,9 +128,11 @@ async function createApp() {
         fs.writeFileSync(`${projectDir}/public/temp/.gitkeep`, "");
       }
     } else {
-      console.log(
-        chalk.red(`⚠️  Directory with name ${projectName} already exist.`)
-      );
+      // console.log(
+      //   chalk.red(`⚠️  Directory with name ${projectName} already exist.`)
+      // );
+      spinner.fail(`⚠️  Directory with name ${projectName} already exists.`);
+      return;
     }
 
     if (answers.useEnvFile) {
@@ -424,39 +430,39 @@ export { ApiError };
     }
 
     // Creating package.json
-    let redis = null;
+    // let redis = null;
 
-    const dependenciesPromise = [getLatestVersion("express", redis)];
+    const dependenciesPromise = [await getLatestVersion("express")];
 
     if (answers.useCors)
-      dependenciesPromise.push(getLatestVersion("cors", redis));
+      dependenciesPromise.push(await getLatestVersion("cors"));
     if (answers.useEnvFile)
-      dependenciesPromise.push(getLatestVersion("dotenv", redis));
+      dependenciesPromise.push(await getLatestVersion("dotenv"));
     if (answers.connectMongoDB) {
-      dependenciesPromise.push(getLatestVersion("mongoose", redis));
+      dependenciesPromise.push(await getLatestVersion("mongoose"));
       dependenciesPromise.push(
-        getLatestVersion("mongoose-aggregate-paginate-v2", redis)
+        await getLatestVersion("mongoose-aggregate-paginate-v2")
       );
     }
     if (answers.useMorganWinston) {
-      dependenciesPromise.push(getLatestVersion("winston", redis));
-      dependenciesPromise.push(getLatestVersion("morgan", redis));
+      dependenciesPromise.push(await getLatestVersion("winston"));
+      dependenciesPromise.push(await getLatestVersion("morgan"));
     }
 
-    const devDependenciesPromise = [getLatestVersion("nodemon", redis)];
+    const devDependenciesPromise = [await getLatestVersion("nodemon")];
 
     if (answers.usePrettier)
-      devDependenciesPromise.push(getLatestVersion("prettier", redis));
+      devDependenciesPromise.push(await getLatestVersion("prettier"));
 
     const dependenciesRaw = await Promise.all(dependenciesPromise);
     const devDependenciesRaw = await Promise.all(devDependenciesPromise);
 
     const dependencies = dependenciesRaw.map(
-      (dependency) => `"${dependency.name}": "${dependency.version}"`
+      (dependency) => `"${dependency.name}": "^${dependency.version}"`
     );
 
     const devDependencies = devDependenciesRaw.map(
-      (dependency) => `"${dependency.name}": "${dependency.version}"`
+      (dependency) => `"${dependency.name}": "^${dependency.version}"`
     );
 
     const packageJsonContent = `{
@@ -616,8 +622,25 @@ dist
       );
       initializeGit(projectDir);
     }
+
+    console.log("\n");
+    console.log("\n");
+    // spinner.succeed("Project setup complete!");
+    spinner.succeed(chalk.green(`Project ${projectName} has been created successfully! 🎉`))
+    console.log("\n");
+    console.log(chalk.gray(`Follow below steps to install.`));
+    console.log(`1. ${chalk.cyan(`cd ${projectName}`)}`);
+    console.log(`2. ${chalk.cyan(`npm install`)}`);
+    console.log("\n");
+    console.log(chalk.greenBright(chalk.italic("Start your server: ")));
+    console.log(chalk.bold(`1- npm run dev 🚀`));
+    console.log("\n");
+    console.log(`Hot ${chalk.cyan(`Coding.`)} 🔥`);
+    console.log("\n");
+
   } catch (error) {
-    console.error(chalk.red(error));
+    // console.error(chalk.red(error));
+    spinner.fail(`Something went wrong: ${error.message}`);
   }
 }
 
@@ -625,11 +648,7 @@ function initializeGit(projectDir) {
   try {
     execSync("git init", { cwd: projectDir, stdio: "inherit" });
     execSync("git add .", { cwd: projectDir, stdio: "inherit" });
-    execSync('git commit -m "Initial commit"', {
-      cwd: projectDir,
-      stdio: "inherit",
-    });
-    console.log(chalk.green("Git repository initialized successfully."));
+    console.log(chalk.green("Git repository initialized successfully.\n"));
   } catch (error) {
     console.error(chalk.red("Failed to initialize Git repository:", error));
   }
