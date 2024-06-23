@@ -1,5 +1,5 @@
 
-# Node.js Project Generator | npx init-node
+# Node.js Project Generator | npx init-node-project
 
 Welcome to the Node.js Project Generator! This tool helps you quickly scaffold a new Node.js application with various optional features like CORS, environment variables, logging, MongoDB integration, and more. 🚀
 
@@ -33,7 +33,7 @@ First, ensure you have Node.js and npm installed on your machine. Then, you can 
 Install my-project with npx
 
 ```bash
-  npx init-node
+  npx init-node-project
 ```
     
 ## Options

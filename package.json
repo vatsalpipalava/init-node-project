@@ -1,11 +1,11 @@
 {
-  "name": "init-node",
+  "name": "init-node-project",
   "version": "1.0.0",
   "description": "complete node project/app/api setup",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "init-node": "./index.js"
+    "init-node-project": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
