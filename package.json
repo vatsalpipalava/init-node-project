@@ -1,0 +1,28 @@
+{
+  "name": "init-node",
+  "version": "1.0.0",
+  "description": "complete node project/app/api setup",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "init-node": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.23",
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.2"
+  }
+}
